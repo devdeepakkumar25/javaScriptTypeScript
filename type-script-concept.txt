@@ -1,0 +1,15 @@
+Benefits 
+Static typing 
+Code completion 
+Refactoring 
+Shorthand notations 
+
+Drawbacks 
+completion 
+discipline in coding 
+
+
+
+.ts -> Compiler -> .js 
+this process is called transpilation
+

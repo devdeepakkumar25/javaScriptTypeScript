@@ -1,0 +1,392 @@
+// ======================================================================
+// FILE: oop_typescript_explained.ts
+// PURPOSE: Complete, line-by-line explanation of OOP in TypeScript
+// - classes, constructors, properties, methods
+// - access control (public/private/protected/readonly)
+// - getters & setters
+// - static members
+// - index signatures
+// - inheritance, polymorphism, abstract classes, interfaces
+// - single-file study example, runnable (with tsc + node)
+// ======================================================================
+
+/*
+  Quick notes:
+  - TypeScript is a superset of JavaScript that adds static types.
+  - OOP concepts map well onto TS: classes become blueprints for objects.
+  - This file interleaves code + detailed comments so you can learn each line.
+*/
+
+// -----------------------------
+// 1. OOP conceptual reminders
+// -----------------------------
+/*
+  Object = encapsulation of:
+    - Data (state)  -> properties / fields
+    - Operations   -> methods / functions
+
+  Class = blueprint for objects (instances)
+  Instance = concrete object created from a class (using 'new')
+
+  We'll cover:
+   - class syntax and constructors
+   - access modifiers: public, private, protected, readonly
+   - getters / setters
+   - static members (class-level state)
+   - index signatures (dynamic property names)
+   - inheritance, polymorphism, abstract classes
+   - interfaces
+*/
+
+// ==============================
+// 2. Basic class: Account
+// ==============================
+class Account {
+  // These are instance properties declared (no access modifiers -> public)
+  id: number;
+  owner: string;
+  balance: number;
+
+  // Constructor initializes instance properties when `new Account(...)` is called
+  constructor(id: number, owner: string, balance: number) {
+    this.id = id;
+    this.owner = owner;
+    this.balance = balance;
+  }
+
+  // Method: deposit money into the account
+  deposit(amount: number): void {
+    // Validate input; throwing an Error will stop execution unless caught
+    if (amount <= 0) {
+      throw new Error('Invalid amount');
+    }
+    this.balance += amount; // mutate the instance's balance
+  }
+}
+
+// Use the class:
+let account = new Account(1, 'Mosh', 0);
+account.deposit(100);                 // add 100
+console.log('Basic Account balance:', account.balance); // prints 100
+
+// Common JS/JS runtime introspection:
+console.log('Account instance:', account);
+console.log('typeof account:', typeof account);          // "object"
+console.log('account instanceof Account:', account instanceof Account); // true
+
+// -----------------------------
+// 3. Encapsulation & access control
+// -----------------------------
+/*
+  Best practice: hide internal state and expose safe methods.
+
+  TypeScript access modifiers:
+   - public  : accessible anywhere (default)
+   - private : accessible only within the class (not derived classes)
+   - protected: accessible within class and derived classes
+   - readonly: can be set once (on initialization) and then cannot be reassigned
+*/
+
+class Account2 {
+  readonly id: number;           // readonly - set once in ctor, cannot be reassigned later
+  owner: string;                 // public by default
+  private _balance: number;      // private backing store for balance
+  nickname?: string;             // optional property (may be undefined)
+
+  constructor(id: number, owner: string, balance: number) {
+    this.id = id;
+    this.owner = owner;
+    this._balance = balance;
+  }
+
+  deposit(amount: number): void {
+    if (amount <= 0) throw new Error('Invalid amount');
+    this._balance += amount;
+  }
+
+  // private helper method; cannot be called from outside the class
+  private calculateTax() {
+    // Implementation detail (private)
+  }
+
+  // public method to read private _balance safely
+  getBalance(): number {
+    return this._balance;
+  }
+}
+
+let account2 = new Account2(1, 'Mosh', 0);
+account2.deposit(100);
+console.log('Account2:', account2);
+console.log('Account2 getBalance():', account2.getBalance());
+// account2.id = 2; // Error: cannot assign to 'id' because it is a read-only property
+// console.log(account2._balance) // Error: property '_balance' is private
+
+// -----------------------------
+// 4. Parameter properties (shorthand)
+// -----------------------------
+/*
+  TypeScript provides a shorthand to declare and initialize properties
+  directly in the constructor parameter list using access modifiers.
+  This avoids repeating property declarations above the constructor.
+*/
+
+class Account3 {
+  nickname?: string;
+
+  // The `public readonly id` and `private _balance` declarations here
+  // both declare the property and assign the constructor parameter to it.
+  constructor(
+    public readonly id: number,
+    public owner: string,
+    private _balance: number
+  ) {
+    // No explicit assignments needed — done by TypeScript
+  }
+
+  deposit(amount: number): void {
+    if (amount <= 0) throw new Error('Invalid amount');
+    this._balance += amount;
+  }
+
+  private calculateTax() {
+    // ...
+  }
+
+  // getter (property-like access)
+  get balance(): number {
+    return this._balance;
+  }
+
+  // setter (property-like assignment; includes validation)
+  set balance(value: number) {
+    if (value < 0) throw new Error('Invalid Value');
+    this._balance = value;
+  }
+}
+
+let account3 = new Account3(1, 'Mosh', 0);
+account3.deposit(100);
+console.log('Account3 (with getter):', account3.balance);
+account3.balance = 200; // uses setter
+// account3.balance = -10 // would throw
+
+// -----------------------------
+// 5. Index signature
+// -----------------------------
+/*
+  Sometimes you want an object type whose property names are not known
+  in advance — e.g., seat numbers "A1", "B2", etc. Use an index signature.
+*/
+
+class SeatAssignment {
+  // index signature says: any string key maps to a string value
+  [seatNumber: string]: string | undefined;
+}
+
+let seats = new SeatAssignment();
+seats.A1 = 'Mosh';
+seats['A2'] = 'John'; // bracket notation is identical to dot notation when key is a valid identifier
+console.log('Seat A1:', seats.A1);
+console.log('Seat A2:', seats['A2']);
+
+// -----------------------------
+// 6. Static members (class-level state)
+// -----------------------------
+/*
+  Static members belong to the class itself, not to instances.
+  Use static for values that are shared across all instances.
+*/
+
+class Ride {
+  // private static field to count active rides
+  private static _activeRides: number = 0;
+
+  start() {
+    Ride._activeRides++;
+  }
+
+  stop() {
+    Ride._activeRides--;
+  }
+
+  // static getter to read the private static field
+  static get activeRides(): number {
+    return Ride._activeRides;
+  }
+}
+
+let ride1 = new Ride();
+ride1.start();
+
+let ride2 = new Ride();
+ride2.start();
+
+// Instances themselves don't have `activeRides`, it's on the class
+console.log('Active rides (class):', Ride.activeRides); // 2
+
+// -----------------------------
+// 7. Inheritance and protected/private differences
+// -----------------------------
+/*
+  - protected members are accessible in subclasses
+  - private members are not accessible in subclasses
+  - override keyword (TypeScript 4.3+) ensures you are overriding a parent member
+*/
+
+class Person {
+  constructor(public firstName: string, public lastName: string) {}
+
+  // getter computed property for convenience
+  get fullName() {
+    return this.firstName + ' ' + this.lastName;
+  }
+
+  // protected: subclasses can use it
+  protected walk() {
+    console.log('walk');
+  }
+
+  // private: only this class can call it
+  private talk() {
+    console.log('talk');
+  }
+}
+
+class Student extends Person {
+  constructor(public studentId: number, firstName: string, lastName: string) {
+    super(firstName, lastName); // call parent constructor
+  }
+
+  takeTest() {
+    console.log('Taking a test');
+    this.walk(); // allowed: walk is protected
+    // this.talk(); // Error: talk is private to Person
+  }
+}
+
+class Teacher extends Person {
+  // override fullName to prefix 'Professor '
+  override get fullName() {
+    return 'Professor ' + super.fullName;
+  }
+}
+
+class Principal extends Person {
+  override get fullName() {
+    return 'Principal ' + super.fullName;
+  }
+}
+
+let student = new Student(1, 'John', 'Doe');
+console.log('Student name:', student.fullName);
+
+let teacher = new Teacher('Mosh', 'Hamedani'); // uses Person constructor signature
+console.log('Teacher fullName:', teacher.fullName);
+
+// Polymorphism: functions that accept a Person can take Student, Teacher, Principal, etc.
+function printNames(people: Person[]) {
+  for (let person of people) {
+    console.log('->', person.fullName);
+  }
+}
+
+printNames([teacher, student]);
+printNames([
+  new Student(2, 'Joe', 'Smith'),
+  new Teacher('Mosh', 'Hamedani'),
+  new Principal('Mary', 'Smith'),
+]);
+
+// -----------------------------
+// 8. Open/Closed Principle (brief note)
+// -----------------------------
+/*
+  Software entities (classes, functions, modules) should be:
+    - Open for extension (can add new behavior)
+    - Closed for modification (avoid changing existing code)
+  Example: we extend Person with Student/Teacher instead of editing Person.
+*/
+
+// -----------------------------
+// 9. Abstract classes
+// -----------------------------
+/*
+  An abstract class cannot be instantiated directly. It can include
+  abstract methods that must be implemented by derived classes.
+*/
+
+abstract class Shape {
+  constructor(public color: string) {}
+  abstract render(): void; // subclasses must implement render()
+}
+
+class CircleShape extends Shape {
+  constructor(public radius: number, color: string) {
+    super(color);
+  }
+
+  override render(): void {
+    console.log(`Rendering a circle of radius ${this.radius} and color ${this.color}`);
+  }
+}
+
+// Example use:
+const circleShape = new CircleShape(5, 'red');
+circleShape.render();
+
+// -----------------------------
+// 10. Abstract analog: Calendar example
+// -----------------------------
+abstract class Calendar {
+  constructor(public name: string) {}
+  abstract addEvent(): void;
+  abstract removeEvent(): void;
+}
+
+// Interfaces (more flexible contracts)
+interface ICalendar {
+  name: string;
+  addEvent(): void;
+  removeEvent(): void;
+}
+
+interface CloudCalendar extends ICalendar {
+  sync(): void;
+}
+
+// Implementing an interface
+class GoogleCalendar implements ICalendar {
+  constructor(public name: string) {}
+
+  addEvent(): void {
+    console.log('GoogleCalendar addEvent (not implemented fully here)');
+  }
+  removeEvent(): void {
+    console.log('GoogleCalendar removeEvent (not implemented fully here)');
+  }
+}
+
+// -----------------------------
+// 11. Final notes, summary & best practices
+// -----------------------------
+/*
+  - Use `private` to hide implementation details and `protected` for things subclasses need.
+  - Use `readonly` for values that should never change after initialization.
+  - Prefer getters/setters to expose derived or validated properties (like balance).
+  - Use static members for data shared across all instances (counters, caches).
+  - Index signatures are useful for dictionary-like objects (SeatAssignment).
+  - Use abstract classes when you have a base class with some shared behaviour that derived classes must implement.
+  - Prefer interfaces for describing external contracts (shapes of objects, APIs).
+  - Keep constructors thin: avoid heavy logic in constructors; use methods or factories for complex initialization.
+*/
+
+// -----------------------------
+// 12. Quick console summary to help remember
+// -----------------------------
+console.log('\n--- Quick Summary ---');
+console.log('Account3 example balance (getter):', account3.balance);
+console.log('Active rides:', Ride.activeRides);
+console.log('Student instanceof Person?', student instanceof Person);
+console.log('CircleShape is a Shape instance:', circleShape instanceof Shape);
+

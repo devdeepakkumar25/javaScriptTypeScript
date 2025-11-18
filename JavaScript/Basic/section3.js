@@ -264,10 +264,10 @@ function showPrimes(limit) {
 }
 
 function isPrime(number) {
-  for (let factor = 2; factor < number; factor++) {
+  for (let factor = 2; factor * factor <= number; factor++) {
     if (number % factor === 0) return false;
   }
   return true;
 }
 
-showPrimes(10);
+showPrimes(3);

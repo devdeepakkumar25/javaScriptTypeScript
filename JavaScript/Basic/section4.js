@@ -230,3 +230,198 @@ console.log(c6);
 
 const c7 = { ...circleA };
 console.log(c7);
+
+console.log(Math.random());
+function getRandom() {
+  return Math.random();
+}
+
+console.log(getRandom());
+
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+console.log(getRandomArbitrary(2, 3));
+
+console.log(Math.round(1.2));
+
+console.log(Math.max(1, 2, 3));
+
+console.log(Math.min(1, 2, 3, 4, 5));
+
+// String Object
+const anotherS = new String("hi"); // this is objecct type
+console.log(typeof anotherS);
+
+// String Primitive
+const message = "Hi, This is my first message";
+console.log(typeof message); // this is string type
+
+console.log(message.length);
+
+console.log(message[0]);
+
+console.log(message[1]);
+
+console.log(message.includes("my"));
+
+console.log(message.includes("not"));
+
+console.log(message.startsWith("Hi"));
+
+console.log(message.endsWith("ge"));
+
+console.log(message.indexOf("my"));
+
+console.log(message.replace("first", "second"));
+
+console.log(message.toUpperCase());
+
+console.log(message.toLowerCase());
+
+console.log(message.trim());
+
+console.log(message);
+
+let msg = "This is my 'first message";
+console.log(msg);
+
+msg = "This is my\n frist message";
+console.log(msg);
+
+console.log(message.split(" "));
+
+console.log(message.split(","));
+
+// Template Listeral
+
+const msgA = `
+this is my
+first message
+`;
+
+console.log(msgA);
+const name = "John Smith";
+
+const greetMessage = `
+Hi ${name},
+
+Thank you for joining my mailing list.
+
+Regards,
+Deepak Kumar Dev
+`;
+
+console.log(greetMessage);
+
+const now = new Date();
+
+console.log(now);
+
+const date1 = new Date("May 11 2018 09:00");
+
+console.log(date1);
+
+now.setFullYear(2017);
+
+console.log(now.toDateString());
+
+console.log(now.toTimeString());
+
+const address = {
+  street: "a",
+  city: "b",
+  zipCode: 1111,
+};
+
+function showAddress(address) {
+  //   for (let key in address) {
+  //     console.log(key, address[key]);
+  //   }
+  for (let key of Object.keys(address)) {
+    console.log(key, address[key]);
+  }
+
+  //   for (let entry of Object.entries(address)) {
+  //     console.log(entry);
+  //   }
+}
+
+showAddress(address);
+
+// Cunstructor Funtion
+
+function Address(street, city, zipCode) {
+  this.street = street;
+  this.city = city;
+  this.zipCode = zipCode;
+}
+
+// class Address {
+//     constructor(street, city, zipCode) {
+//         this.street = street;
+//         this.city = city;
+//         this.zipCode = zipCode;
+//     }
+// }
+
+let address1 = new Address("a", "b", "c");
+
+let address2 = new Address("a", "b", "c");
+
+function areEqual(address1, address2) {
+  return (
+    address1.street === address2.street &&
+    address1.city === address2.city &&
+    address1.zipCode === address2.zipCode
+  );
+}
+
+console.log(areEqual(address1, address2));
+
+function areSame(address1, address2) {
+  return address1 === address2;
+}
+
+console.log(areSame(address1, address2));
+
+function createPost(title, body, author) {
+  return {
+    title,
+    body,
+    author,
+    views: 0,
+    comments: [
+      {
+        author,
+        body,
+      },
+    ],
+    isLive: false,
+  };
+}
+const post = createPost("a", "b", "c");
+post.comments.push({ author: "c", body: "d" });
+
+console.log(post);
+
+function Post(title, body, author) {
+  this.title = title;
+  this.body = body;
+  this.author = author;
+  this.views = 0;
+  this.comments = [];
+  this.isLive = false;
+}
+
+const posta = new Post("a", "b", "c");
+console.log(posta);
+
+let priceRanges = [
+  { label: "$", tooltip: "Inexpensive", minPerson: 0, maxPerson: 10 },
+  { label: "$$", tooltip: "Moderate", minPerson: 11, maxPerson: 20 },
+  { label: "$$$", tooltip: "Expensive", minPerson: 21, maxPerson: 50 },
+];
+
+let resturants = [{ averagePerPerson: 5 }];

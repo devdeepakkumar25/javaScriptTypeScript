@@ -147,7 +147,6 @@ const shapes = [new Circle(), new Square(), new Shape()];
 
 for (let shape of shapes) shape.duplicate();
 
-
 function mixin(target, ...sources) {
   Object.assign(target, ...sources);
 }
@@ -201,3 +200,99 @@ const goldfish = new Goldfish();
 console.log(goldfish);
 goldfish.eat();
 goldfish.swim();
+
+function HtmlElement() {
+  this.click = function () {
+    console.log("Clicked");
+  };
+}
+
+HtmlElement.prototype.focus = function () {
+  console.log("Focused");
+};
+
+function HtmlSelectElement(items = []) {
+  this.items = items;
+  this.addItem = function (item) {
+    this.items.push(item);
+  };
+
+  this.removeItem = function (item) {
+    this.items.splice(this.items.indexOf(item), 1);
+  };
+}
+
+// baseHtmlSelectElement
+// HtmlSelectElement.prototype - Object.create(HtmlElement.prototype);
+HtmlSelectElement.prototype = new HtmlElement();
+
+const st = new HtmlSelectElement();
+
+function HtmlElement() {
+  this.click = function () {
+    console.log("Clicked");
+  };
+}
+
+HtmlElement.prototype.focus = function () {
+  console.log("Focused");
+};
+
+function HtmlSelectElement(items = []) {
+  this.items = items;
+  this.addItem = function (item) {
+    this.items.push(item);
+  };
+
+  this.removeItem = function (item) {
+    this.items.splice(this.items.indexOf(item), 1);
+  };
+}
+
+// baseHtmlSelectElement
+// HtmlSelectElement.prototype - Object.create(HtmlElement.prototype);
+HtmlSelectElement.prototype = new HtmlElement();
+HtmlSelectElement.prototype.constructor = HtmlSelectElement;
+const s2 = new HtmlSelectElement();
+
+function HtmlElement() {
+  this.click = function () {
+    console.log("Clicked");
+  };
+}
+
+HtmlElement.prototype.focus = function () {
+  console.log("Focused");
+};
+
+function HtmlSelectElement(items = []) {
+  this.items = items;
+  this.addItem = function (item) {
+    this.items.push(item);
+  };
+
+  this.removeItem = function (item) {
+    this.items.splice(this.items.indexOf(item), 1);
+  };
+  this.render = function () {
+    return `
+    <slect> 
+    ${this.items.map((item) => `<option>${item}</option>`).join("")}
+    </select>
+    
+    `;
+  };
+}
+
+const renderItem = (item) => `<option>${item}</option>`;
+
+// baseHtmlSelectElement
+// HtmlSelectElement.prototype - Object.create(HtmlElement.prototype);
+HtmlSelectElement.prototype = new HtmlElement();
+HtmlSelectElement.prototype.constructor = HtmlSelectElement;
+
+function HtmlImageElement(src) {
+  this.src = src;
+}
+
+const s3 = new HtmlSelectElement();

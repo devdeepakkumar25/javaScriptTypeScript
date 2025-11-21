@@ -1,15 +1,15 @@
-console.log("hello world");
+// console.log("hello world");
 
 
-let age: number = 20;
+// let age: number = 20;
 
-// age = 'a' we can assign it 
+// // age = 'a' we can assign it 
 
 
-if (age < 50)
-    age += 10;
+// if (age < 50)
+//     age += 10;
 
-console.log(age);
+// console.log(age);
 
 
 

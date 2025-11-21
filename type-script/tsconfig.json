@@ -24,12 +24,16 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     // "noImplicitAny": false,
+    "experimentalDecorators": true,
+
+    "emitDecoratorMetadata": false,
+    "useDefineForClassFields": false,
 
     // Style Options
     "noImplicitReturns": true,
     "noImplicitOverride": true,
     // "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
     "allowUnreachableCode": false,
